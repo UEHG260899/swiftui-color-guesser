@@ -56,23 +56,33 @@ struct ContentView: View {
                         BevelText(text: "R: ??? G: ??? B: ???",
                                   width: geometry.size.width * labelWidth,
                                   height: geometry.size.height * labelHeight)
+                        .accessibilityLabel(
+                            Text("Target red, green, blue values ypu must guess")
+                        )
                     } else {
-                        BevelText(text: game.target.intString(),
+                        BevelText(text: game.target.intString,
                                   width: geometry.size.width * labelWidth,
                                   height: geometry.size.height * labelHeight)
                     }
                     ColorCircle(rgb: guess,
                                 size: geometry.size.width * circleSize)
-                    BevelText(text: guess.intString(),
-                              width: geometry.size.width * labelWidth,
-                              height: geometry.size.height * labelHeight)
+                    BevelText(
+                        text: guess.intString,
+                        width: geometry.size.width * labelWidth,
+                        height: geometry.size.height * labelHeight)
+                    .accessibilityLabel(Text("Your guess: " + guess.accString))
+                    .accessibilitySortPriority(2)
                     ColorSlider(value: $guess.red, trackColor: .red)
+                        .accessibilitySortPriority(5)
                     ColorSlider(value: $guess.green, trackColor: .green)
+                        .accessibilitySortPriority(4)
                     ColorSlider(value: $guess.blue, trackColor: .blue)
+                        .accessibilitySortPriority(3)
                     Button("Hit Me!") {
-                        showScore = true
-                        game.check(guess: guess)
+                        self.showScore = true
+                        self.game.check(guess: guess)
                     }
+                    .accessibilitySortPriority(1)
                     .buttonStyle(NeuButtonStyle(width: geometry.size.width * buttonWidth,
                                                 height: geometry.size.height * labelHeight))
                     .alert(isPresented: $showScore) {
@@ -99,7 +109,7 @@ struct ContentView_Previews: PreviewProvider {
                 .previewDevice("iPhone 8")
             ContentView(guess: RGB())
         }
-            
+        
     }
 }
 
@@ -111,9 +121,14 @@ struct ColorSlider: View {
     var body: some View {
         HStack {
             Text("0")
+                .accessibilityHidden(true)
             Slider(value: $value)
                 .accentColor(trackColor)
+                .accessibilityValue(
+                    Text(String(describing: trackColor) + String(Int(value * 255)))
+                )
             Text("255")
+                .accessibilityHidden(true)
         }
         .padding(.horizontal)
         .font(.subheadline)
